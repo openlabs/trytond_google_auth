@@ -42,7 +42,9 @@ class User(ModelSQL, ModelView):
                 logger.info("Google auth was successful for %s" % login)
                 return user_id
             except gdata.service.CaptchaRequired, exc:
-                raise Exception(exc)
+                logging.error("%s for %s" % (exc, login))
+                logging.info("Falling back to STD auth for %s" % login)
+                return super(User, self).get_login(login, password)
             except gdata.service.BadAuthentication, exc:
                 logger.error("%s for %s" % (exc, login))
                 return 0
